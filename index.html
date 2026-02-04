@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BIM COLLAB</title>
+    <!-- Font Awesome (Ensured stable CDN link) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <link rel="stylesheet" href="./src/styles.css">
+    <style>
+        @media (hover: none) {
+            .tooltip-text {
+                display: none !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .logo-subtitle {
+                display: block;
+                width: min-content;
+            }
+        }
+
+        /* Consistent Search Bar Styling for Mobile & Web */
+        .search-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .search-input {
+            width: 0;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            position: absolute;
+            right: 0;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 4px 25px 4px 8px;
+            z-index: 5;
+            color: var(--text-main);
+        }
+        .search-wrapper.expanded .search-input {
+            width: 160px;
+            opacity: 1;
+            visibility: visible;
+        }
+        .search-toggle-icon {
+            z-index: 6;
+            position: relative;
+            cursor: pointer;
+        }
+        .search-clear-btn {
+            position: absolute;
+            right: 5px;
+            z-index: 7;
+        }
+
+        .contact-modal {
+            background: var(--bg-card, #fff);
+            padding: 1.5rem;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 450px;
+            border: 1px solid var(--border, #ccc);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        .contact-form-group { margin-bottom: 1rem; }
+        .contact-form-group label { display: block; margin-bottom: 0.5rem; font-size: 0.85rem; font-weight: 500; color: var(--text-muted); }
+        .contact-form-group input, .contact-form-group textarea {
+            width: 100%; padding: 0.5rem; border: 1px solid var(--border); border-radius: 4px;
+            background: var(--bg-body); color: var(--text-main); box-sizing: border-box;
+        }
+        /* Validation Styles */
+        .contact-form-group input:invalid:not(:placeholder-shown),
+        .contact-form-group textarea:invalid:not(:placeholder-shown) {
+            border-color: #ef4444;
+        }
+    </style>
+    <script type="importmap">
+        {
+            "imports": {
+                "firebase/app": "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js",
+                "firebase/firestore": "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js",
+                "firebase/storage": "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js",
+                "firebase/analytics": "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js",
+                "firebase/auth": "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js"
+            }
+        }
+    </script>
+    <!-- Google AdSense (Replace ca-pub-XXXXXXXXXXXXXXXX with your actual Publisher ID) -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=pub-8770092878533549" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div id="app-loader" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; background: var(--bg-body); color: var(--text-muted); text-align: center; padding: 2rem; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; transition: opacity 0.3s ease-out;">
+        <i class="fas fa-cubes fa-spin fa-3x" style="color: var(--primary); margin-bottom: 1.5rem;"></i>
+        <h2 style="color: var(--text-main); font-size: 1.2rem;">Loading BIM Collab</h2>
+        <p>Authenticating your session...</p>
+    </div>
+
+    <div id="auth-container" class="auth-container" style="display: none;">
+        <div class="auth-card">
+            <div class="auth-logo">
+                <i class="fas fa-cubes"></i>
+                <span>BIM COLLAB</span>
+            </div>
+    
+            <!-- Login Form -->
+            <div id="login-form">
+                <h2 class="auth-title">Sign In</h2>
+                <p class="auth-subtitle">Welcome back! Please enter your details.</p>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="login-email" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="login-password" required>
+                        <i class="fas fa-eye toggle-password" onclick="togglePassword('login-password', this)"></i>
+                    </div>
+                </div>
+                <div class="form-group" style="display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <input type="checkbox" id="login-remember" style="width: auto;">
+                        <label for="login-remember" style="margin: 0; cursor: pointer;">Remember me</label>
+                    </div>
+                    <a href="#" id="forgot-password-link" style="font-size: 0.85rem; color: var(--primary); text-decoration: none;">Forgot Password?</a>
+                </div>
+                <div id="login-error" class="auth-error"></div>
+                <button id="login-btn" class="auth-btn">Sign In</button>
+                <div class="auth-divider"><span>OR</span></div>
+                <button id="google-btn" class="auth-btn-google"><i class="fab fa-google"></i> Sign in with Google</button>
+                <p class="auth-toggle">Don't have an account? <a href="#" id="show-signup">Create one</a></p>
+            </div>
+    
+            <!-- Signup Form (hidden by default) -->
+            <div id="signup-form" style="display: none;">
+                <h2 class="auth-title">Create Account</h2>
+                <p class="auth-subtitle">Get started with your team.</p>
+                <div class="form-group"><label>Full Name</label><input type="text" id="signup-name" required></div>
+                <div class="form-group"><label>Email</label><input type="email" id="signup-email" required></div>
+                <div class="form-group"><label>Password</label><input type="password" id="signup-password" required></div>
+                <div class="form-group"><label>Confirm Password</label><input type="password" id="signup-confirm-password" required></div>
+                <div class="form-group"><label>Your Role</label><select id="signup-role" class="dropdown-input" style="cursor:pointer; margin-bottom:0;"><option value="architect">Architect</option><option value="engineer">Engineer</option><option value="contractor">Contractor</option><option value="quantity">Quantity Surveyor</option><option value="owner">Owner</option></select></div>
+                <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem;">
+                    <input type="checkbox" id="signup-terms" style="width: auto;">
+                    <label for="signup-terms" style="margin: 0; cursor: pointer;">I agree to the <a href="terms.html" style="color:var(--primary)">Terms & Conditions</a></label>
+                </div>
+                <div id="signup-error" class="auth-error"></div>
+                <button id="signup-btn" class="auth-btn">Create Account</button>
+                <div class="auth-divider"><span>OR</span></div>
+                <button id="google-signup-btn" class="auth-btn-google"><i class="fab fa-google"></i> Sign up with Google</button>
+                <p class="auth-toggle">Already have an account? <a href="#" id="show-login">Sign in</a></p>
+            </div>
+        </div>
+    </div>
+
+    <header class="header" style="display: none;">
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-cubes"></i>
+                <div style="display: flex; flex-direction: column; margin-left: 10px; line-height: 1.2;">
+                    <span>BIM COLLAB</span>
+                    <span class="logo-subtitle" style="font-size: 0.75rem; font-weight: 400;">Building Information Modeling</span>
+                </div>
+                <span id="headerProjectName" style="display:none; padding-left:10px; border-left:2px solid var(--border); color:var(--text-muted); font-weight:500; font-size:0.9em;"></span>
+            </div>
+            <div class="header-right">
+                <span id="proBadge" style="display:none; background: linear-gradient(135deg, #FFD700, #FFA500); color: #fff; font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; font-weight: 700; margin-right: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">PRO</span>
+                <div class="avatar-wrapper">
+                    <div id="userAvatar" class="user-avatar" style="display: none;" onclick="toggleSettingsDropdown()" title="Settings">
+                        <img id="avatarImage" src="" style="display:none; width:100%; height:100%; border-radius:50%; object-fit:cover;">
+                        <span id="avatarInitials"></span>
+                    </div>
+                    <div id="statusIndicator" class="status-indicator online"></div>
+                    <div id="settingsDropdown" class="settings-dropdown">
+                        <div class="dropdown-header">
+                            <span>Settings</span>
+                            <i class="fas fa-times" style="cursor:pointer" onclick="toggleSettingsDropdown()"></i>
+                        </div>
+                        <div class="dropdown-body">
+                            <div class="profile-picture-setting">
+                                <div id="settingsAvatar" class="user-avatar">
+                                    <img id="settingsAvatarImage" src="" style="display:none; width:100%; height:100%; border-radius:50%; object-fit:cover;">
+                                    <span id="settingsAvatarInitials"></span>
+                                </div>
+                                <div class="profile-actions">
+                                    <label for="avatarUploadInput" class="upload-avatar-btn" title="Upload Avatar">
+                                        <i class="fas fa-upload"></i> <span>Upload</span>
+                                        <input type="file" id="avatarUploadInput" accept="image/*" style="display:none;">
+                                    </label>
+                                    <button onclick="openUpgradeModal(); toggleSettingsDropdown()" class="upload-avatar-btn upgrade-btn" title="Upgrade to Pro">
+                                        <i class="fas fa-crown"></i> <span>Upgrade</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <label style="font-size:0.75rem; color:var(--text-muted); font-weight:500; margin-bottom:4px; display:block;">Display Name</label>
+                            <input type="text" id="settingsNameInput" placeholder="Your Name" class="dropdown-input" onkeypress="if(event.key==='Enter') saveSettingsFromDropdown()">
+                            <div id="ownerProjectNameContainer" style="display:none; margin-bottom: 0.75rem;">
+                                <label style="font-size:0.75rem; color:var(--text-muted); font-weight:500; margin-bottom:4px; display:block;">Project Name</label>
+                                <div style="display:flex; gap:5px;">
+                                    <input type="text" id="settingsProjectNameInput" placeholder="Enter Project Name" class="dropdown-input" style="margin-bottom:0">
+                                    <button onclick="renameProject()" style="background:var(--primary); color:white; border:none; padding:0 0.75rem; border-radius:0.375rem; cursor:pointer; font-size:0.75rem; font-weight:600;">Rename</button>
+                                </div>
+                                <div style="display:flex; justify-content:space-between; margin-top:4px;">
+                                    <button onclick="resetTeamStatus()" style="background:none; border:none; color:var(--primary); font-size:0.65rem; cursor:pointer; text-decoration:underline; padding:0;" title="Reset all users to 'Away'">Fix Online Status</button>
+                                    <button onclick="resetProjectName()" style="background:none; border:none; color:var(--text-muted); font-size:0.65rem; cursor:pointer; text-decoration:underline; padding:0;">Reset Name</button>
+                                </div>
+                            </div>
+                            <label style="font-size:0.75rem; color:var(--text-muted); font-weight:500; margin-bottom:4px; display:block;">Status</label>
+                            <select id="settingsStatusSelect" class="dropdown-input" style="cursor:pointer">
+                                <option value="online">Online</option>
+                                <option value="away">Away</option>
+                                <option value="busy">Do Not Disturb</option>
+                            </select>
+                            <input type="text" id="settingsStatusMessageInput" placeholder="Custom status (e.g., In a meeting)" class="dropdown-input" style="margin-top: -0.25rem; margin-bottom: 0.75rem;">
+                            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.75rem; padding: 0.25rem 0;">
+                                <label style="font-size:0.75rem; color:var(--text-muted); font-weight:500; cursor:pointer;" for="settingsThemeToggle">Dark Mode</label>
+                                <label class="switch">
+                                    <input type="checkbox" id="settingsThemeToggle">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.75rem; padding: 0.25rem 0;">
+                                <label style="font-size:0.75rem; color:var(--text-muted); font-weight:500; cursor:pointer;" for="settingsMuteToggle">Mute Sounds</label>
+                                <label class="switch">
+                                    <input type="checkbox" id="settingsMuteToggle">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div id="projectManagementSection" style="display:none; border-top:1px solid var(--border); border-bottom:1px solid var(--border); margin-top:0.75rem; padding-top:0.75rem; padding-bottom:0.75rem; margin-bottom:0.75rem;">
+                                <label style="font-size:0.75rem; color:var(--text-muted); font-weight:500; margin-bottom:4px; display:block;">Switch Project</label>
+                                <select id="projectSelect" class="dropdown-input" onchange="switchProject(this.value)" style="cursor:pointer"></select>
+                                <button onclick="createProject()" style="width:100%; background:var(--bg-body); color:var(--primary); border:1px dashed var(--primary); padding:0.5rem; border-radius:0.375rem; font-size:0.75rem; cursor:pointer; margin-top:0.5rem; font-weight:600;">+ Create New Project</button>
+                                <button onclick="deleteProject()" style="width:100%; background:transparent; color:#ef4444; border:none; padding:0.5rem; font-size:0.75rem; cursor:pointer; margin-top:0.75rem; font-weight:500; opacity:0.8; transition:opacity 0.2s;" onmouseover="this.style.opacity='1'; this.style.textDecoration='underline'" onmouseout="this.style.opacity='0.8'; this.style.textDecoration='none'">Delete Project</button>
+                            </div>
+                            <button onclick="saveSettingsFromDropdown()" class="dropdown-save-btn">Save Changes</button>
+                            <div style="border-top: 1px solid var(--border); margin-top: 0.75rem; padding-top: 0.75rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                                <button onclick="openServiceCenter(); toggleSettingsDropdown()" style="width:100%; text-align:left; background:transparent; border:1px solid var(--border); padding:0.5rem; color:var(--text-main); cursor:pointer; font-size:0.85rem; display:flex; align-items:center; gap:8px; border-radius: 0.375rem; transition: background 0.2s;" onmouseover="this.style.background='var(--border)'" onmouseout="this.style.background='transparent'">
+                                    <i class="fas fa-headset" style="color:var(--primary); width:16px; text-align:center;"></i> Service Center
+                                </button>
+                                <button onclick="openResourcesModal(); toggleSettingsDropdown()" style="width:100%; text-align:left; background:transparent; border:1px solid var(--border); padding:0.5rem; color:var(--text-main); cursor:pointer; font-size:0.85rem; display:flex; align-items:center; gap:8px; border-radius: 0.375rem; transition: background 0.2s;" onmouseover="this.style.background='var(--border)'" onmouseout="this.style.background='transparent'">
+                                    <i class="fas fa-tools" style="color:var(--primary); width:16px; text-align:center;"></i> Resources & Tools
+                                </button>
+                                <button onclick="logout()" style="width:100%; text-align:left; background:transparent; border:1px solid rgba(239, 68, 68, 0.3); padding:0.5rem; color:#ef4444; cursor:pointer; font-size:0.85rem; display:flex; align-items:center; gap:8px; border-radius: 0.375rem; transition: background 0.2s;" onmouseover="this.style.background='rgba(239, 68, 68, 0.1)'" onmouseout="this.style.background='transparent'">
+                                    <i class="fas fa-sign-out-alt" style="width:16px; text-align:center;"></i> Log Out
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="app-container" style="display: none;">
+        <section id="mainPanel">
+            <div id="dashboardHeader">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div id="welcomeMsg" style="font-size: 0.9rem; color: #666; margin-bottom: 0.2rem;"></div>
+                        <h2 id="dashboardTitle" style="margin: 0; color: var(--primary); font-size: 1.8rem; font-weight: 600;">Dashboard</h2>
+                    </div>
+                    <div id="viewToggle">
+                        <svg width="60" height="40" viewBox="0 0 60 40">
+                            <rect width="60" height="40" rx="20" fill="#2196F3" />
+                            <circle id="notif-left" cx="12" cy="20" r="4" fill="#ef4444" style="display:none"></circle>
+                            <circle id="notif-right" cx="48" cy="20" r="4" fill="#ef4444" style="display:none"></circle>
+                            <circle class="toggle-knob" cx="19.5" cy="20" r="19.5" fill="white"></circle>
+                        </svg>
+                        <div style="display: flex; align-items: center; gap: 6px; margin-top: 4px;">
+                            <span style="font-size: 0.6rem; color: var(--text-muted); font-weight: 600;">Main Stream</span>
+                            <i class="fas fa-arrow-right toggle-arrow" style="font-size: 0.7rem; color: var(--text-muted); opacity: 0.6;"></i>
+                            <span style="font-size: 0.6rem; color: var(--text-muted); font-weight: 600;">Private Channel</span>
+                        </div>
+                        <span class="tooltip-text">Toggle Main/Secondary View</span>
+                    </div>
+                </div>
+            </div>
+            <div id="workspaceContent">
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; color: var(--text-muted); text-align: center; padding: 2rem;">
+                    <i class="fas fa-spinner fa-spin fa-2x" style="color: var(--primary); margin-bottom: 1.5rem;"></i>
+                    <h2 style="color: var(--text-main); font-size: 1.2rem;">Loading Workspace</h2>
+                    <p>Please wait while we prepare your dashboard...</p>
+                </div>
+            </div>
+        </section>
+
+        <aside class="roadmap-aside">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Project Roadmap</span>
+                </div>
+                <div id="stageList" class="stage-list"></div>
+            </div>
+            <!-- AdSense Sidebar Unit -->
+            <div id="ad-container-sidebar" class="card" style="margin-top: 1rem; padding: 1rem; text-align: center; min-height: 250px; display: flex; flex-direction: column; justify-content: center; align-items: center; background: var(--bg-body);">
+                <span style="font-size: 0.65rem; color: var(--text-muted); margin-bottom: 0.5rem; letter-spacing: 1px;">ADVERTISEMENT</span>
+                <!-- AdSense Unit Placeholder -->
+                <ins class="adsbygoogle"
+                     style="display:block; width:100%;"
+                     data-ad-client="pub-8770092878533549"
+                     data-ad-slot="YOUR_SLOT_ID"
+                     data-ad-format="auto"
+                     data-full-width-responsive="true"></ins>
+            </div>
+        </aside>
+    </main>
+
+    <footer class="footer" style="display: none;">
+        <span>&copy; OJ Evolve 2024</span>
+        <span class="footer-sep">|</span>
+        <a href="#" onclick="openResourcesModal(event)" style="color:white; text-decoration:underline">Resources & Tools</a>
+        <span class="footer-sep">|</span>
+        <a href="terms.html" style="color:white; text-decoration:underline">Terms of Service</a>
+        <span class="footer-sep">|</span>
+        <a href="privacy.html" style="color:white; text-decoration:underline">Privacy Policy</a>
+        <span class="footer-sep">|</span>
+        <a href="disclaimer.html" style="color:white; text-decoration:underline">Disclaimer</a>
+        <span class="footer-sep">|</span>
+        <div class="footer-socials">
+            <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
+            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" title="Twitter"><i class="fab fa-twitter"></i></a>
+            <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" title="Facebook"><i class="fab fa-facebook"></i></a>
+            <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" title="Instagram"><i class="fab fa-instagram"></i></a>
+        </div>
+    </footer>
+
+    <button class="floating-service-btn" onclick="openServiceCenter()" title="Service Center">
+        <i class="fas fa-headset"></i>
+    </button>
+
+    <script type="module" src="./src/app.js"></script>
+</body>
+</html>

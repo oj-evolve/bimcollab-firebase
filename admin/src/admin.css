@@ -1,0 +1,240 @@
+:root {
+    --primary: #4f46e5;
+    --bg-body: #f3f4f6;
+    --bg-sidebar: #1f2937;
+    --text-sidebar: #e5e7eb;
+    --bg-card: #ffffff;
+    --text-main: #111827;
+    --border: #e5e7eb;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
+
+body { background: var(--bg-body); color: var(--text-main); height: 100vh; overflow: hidden; }
+
+/* Login Screen */
+.login-container {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: var(--bg-body); display: flex; align-items: center; justify-content: center; z-index: 1000;
+}
+.login-card {
+    background: var(--bg-card); padding: 2rem; border-radius: 0.5rem;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center;
+}
+.login-card input {
+    width: 100%; padding: 0.75rem; margin-bottom: 1rem; border: 1px solid var(--border); border-radius: 0.25rem;
+}
+.login-card button {
+    width: 100%; padding: 0.75rem; background: var(--primary); color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-weight: 600;
+}
+
+/* Admin Layout */
+.app-container { display: flex; height: 100vh; }
+
+.sidebar {
+    width: 250px; background: var(--bg-sidebar); color: var(--text-sidebar);
+    display: flex; flex-direction: column; flex-shrink: 0;
+}
+.brand { padding: 1.5rem; font-size: 1.25rem; font-weight: 700; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.nav-menu { flex: 1; padding: 1rem 0; }
+.nav-item {
+    display: block; padding: 0.75rem 1.5rem; color: rgba(255,255,255,0.7);
+    text-decoration: none; transition: 0.2s; display: flex; align-items: center; gap: 10px;
+}
+.nav-item:hover, .nav-item.active { background: rgba(255,255,255,0.1); color: white; border-left: 3px solid var(--primary); }
+.logout-section { padding: 1rem; border-top: 1px solid rgba(255,255,255,0.1); }
+#logout-btn {
+    width: 100%; padding: 0.5rem; background: transparent; border: 1px solid rgba(255,255,255,0.3);
+    color: white; border-radius: 0.25rem; cursor: pointer;
+}
+
+.main-content { flex: 1; padding: 2rem; overflow-y: auto; }
+
+.page-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem; }
+
+.tab-content { display: none; animation: fadeIn 0.3s ease-out; }
+.tab-content.active { display: block; }
+
+/* Cards & Stats */
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+.stat-card { background: var(--bg-card); padding: 1.5rem; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+.stat-value { font-size: 2rem; font-weight: 700; color: var(--primary); }
+.stat-label { color: #666; font-size: 0.9rem; }
+
+.card { background: var(--bg-card); padding: 1.5rem; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 1.5rem; }
+
+/* Forms */
+.form-input { width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 0.25rem; margin-bottom: 0.5rem; }
+.btn-primary { padding: 0.75rem 1.5rem; background: var(--primary); color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-weight: 600; align-self: flex-start; }
+
+/* Lists */
+.data-list-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1rem; border-bottom: 1px solid var(--border);
+}
+.data-list-item:last-child { border-bottom: none; }
+.item-info h4 { margin-bottom: 0.25rem; }
+.item-info p { font-size: 0.85rem; color: #666; }
+.btn-sm { padding: 0.25rem 0.5rem; font-size: 0.8rem; border-radius: 0.25rem; cursor: pointer; border: 1px solid var(--border); background: white; }
+.btn-danger { color: #ef4444; border-color: #ef4444; }
+.btn-danger:hover { background: #ef4444; color: white; }
+
+/* Toggle Switch */
+.toggle-switch { position: relative; display: inline-flex; align-items: center; cursor: pointer; }
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.slider {
+    position: relative; display: inline-block; width: 40px; height: 24px;
+    background-color: #ccc; border-radius: 34px; transition: .4s;
+}
+.slider:before {
+    position: absolute; content: ""; height: 16px; width: 16px; left: 4px; bottom: 4px;
+    background-color: white; border-radius: 50%; transition: .4s;
+}
+input:checked + .slider { background-color: var(--primary); }
+input:checked + .slider:before { transform: translateX(16px); }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Modals */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 2000;
+}
+.modal-card {
+    background: var(--bg-card); padding: 1.5rem; border-radius: 0.5rem;
+    width: 90%; max-width: 500px; max-height: 80vh; overflow-y: auto;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+.modal-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;
+}
+
+/* Chat Widget Styles */
+.chat-layout { display: flex; height: calc(100vh - 150px); background: var(--bg-card); border-radius: 0.5rem; border: 1px solid var(--border); overflow: hidden; }
+.chat-sidebar { width: 300px; border-right: 1px solid var(--border); overflow-y: auto; background: #f9fafb; flex-shrink: 0; }
+.chat-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.chat-item { padding: 1rem; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.2s; }
+.chat-item:hover, .chat-item.active { background: white; border-left: 3px solid var(--primary); }
+.chat-header { padding: 1rem; border-bottom: 1px solid var(--border); background: white; }
+.chat-messages { flex: 1; padding: 1rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.5rem; background: #f3f4f6; }
+.chat-input-area { padding: 1rem; background: white; border-top: 1px solid var(--border); display: flex; gap: 10px; }
+.chat-input-area input { flex: 1; padding: 0.75rem; border: 1px solid var(--border); border-radius: 0.25rem; }
+.chat-bubble { max-width: 70%; padding: 0.75rem; border-radius: 0.5rem; font-size: 0.9rem; line-height: 1.4; word-wrap: break-word; }
+.chat-bubble.user { align-self: flex-start; background: white; border: 1px solid var(--border); border-bottom-left-radius: 0; color: #1f2937; }
+.chat-bubble.admin { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 0; }
+
+/* New Chat Styles from Input */
+.sidebar-header {
+    padding: 20px;
+    font-weight: 700;
+    color: #111827;
+    border-bottom: 1px solid #e5e7eb;
+    background: #f9fafb;
+}
+
+.session-list {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.session-item {
+    padding: 15px 20px;
+    border-bottom: 1px solid #f3f4f6;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.session-item:hover {
+    background: #f9fafb;
+}
+
+.session-item.active {
+    background: #eff6ff;
+    border-left: 4px solid #3b82f6;
+}
+
+.session-user {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #1f2937;
+    margin-bottom: 4px;
+}
+
+.session-preview {
+    font-size: 0.8rem;
+    color: #6b7280;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.chat-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+}
+
+.messages-container {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background: #f3f4f6;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.message {
+    max-width: 70%;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.message.user {
+    align-self: flex-start;
+    background: white;
+    border: 1px solid #e5e7eb;
+    color: #1f2937;
+}
+
+.message.support {
+    align-self: flex-end;
+    background: #3b82f6;
+    color: white;
+}
+
+.input-area {
+    padding: 20px;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    gap: 10px;
+}
+
+.input-area input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    outline: none;
+}
+
+.input-area button {
+    padding: 0 20px;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.input-area button:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+}

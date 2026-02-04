@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ - BIM COLLAB</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="./src/styles.css">
+    <style>
+        body { padding: 2rem; background: var(--bg-body); display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        .page-card { background: var(--bg-card); padding: 2rem; border-radius: 0.5rem; box-shadow: var(--shadow-md); width: 100%; max-width: 800px; border: 1px solid var(--border); margin-top: 2rem; }
+        .page-title { font-size: 1.5rem; font-weight: 700; color: var(--primary); margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem; }
+        .back-link { align-self: flex-start; margin-bottom: 1rem; color: var(--text-muted); text-decoration: none; font-size: 0.9rem; font-weight: 500; display: flex; align-items: center; gap: 5px; }
+        .back-link:hover { color: var(--primary); }
+        .content { line-height: 1.6; color: var(--text-main); font-size: 0.95rem; }
+        .faq-item { margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem; }
+        .faq-item:last-child { border-bottom: none; }
+        .faq-question { font-weight: 600; color: var(--primary); margin-bottom: 0.5rem; font-size: 1.1rem; display: flex; align-items: center; gap: 10px; }
+        .faq-answer { color: var(--text-main); margin-left: 0; }
+        ul { margin-top: 0.5rem; padding-left: 1.5rem; }
+    </style>
+</head>
+<body>
+    <div style="width: 100%; max-width: 800px;">
+        <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+        <div class="page-card">
+            <div class="page-title">Frequently Asked Questions</div>
+            <div class="content">
+                
+                <div class="faq-item">
+                    <div class="faq-question"><i class="fas fa-key"></i> How do I reset my project password?</div>
+                    <div class="faq-answer">
+                        Currently, project keys are managed by the project owner. If you have lost your access key, please contact the project owner directly. For security reasons, we do not store raw passwords on our servers.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question"><i class="fas fa-file-import"></i> What file formats are supported?</div>
+                    <div class="faq-answer">
+                        BIM COLLAB supports a variety of formats including:
+                        <ul>
+                            <li><strong>Images:</strong> JPG, PNG, WEBP, SVG, BMP</li>
+                            <li><strong>Documents:</strong> PDF (viewing), DOCX, XLSX, PPTX, CSV (download only)</li>
+                            <li><strong>3D Models:</strong> GLB, GLTF</li>
+                            <li><strong>CAD:</strong> DWG, DXF (download only)</li>
+                            <li><strong>Media:</strong> MP4, WEBM, MP3, WAV</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question"><i class="fas fa-users"></i> How do I invite team members?</div>
+                    <div class="faq-answer">
+                        Team members can join by signing up with their email or Google account. Once logged in, they can select their professional role. To access a specific project, they may need the Project ID provided by the Project Owner.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question"><i class="fas fa-shield-alt"></i> Is my data secure?</div>
+                    <div class="faq-answer">
+                        Yes. We use end-to-end encryption for chat messages. Your project files are stored securely in the cloud, and access is restricted to users with the correct project credentials.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question"><i class="fas fa-wifi"></i> Can I use this offline?</div>
+                    <div class="faq-answer">
+                        The application has basic offline capabilities. You can view previously loaded content, but real-time chat and new file uploads require an active internet connection. Changes made offline will sync when you reconnect.
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</body>
+</html>
