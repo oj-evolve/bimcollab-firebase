@@ -10,6 +10,11 @@ import { initServiceCenter, openServiceCenter, openContactModal, submitContactFo
 import { initChat, initChatStorage, resetChatData, addChatMessage, renderChat, chatNode, toggleSearch, checkSearchBlur, handleSearchInput, clearSearch, showMessageToolbar, closeMessageToolbar, send, handleDragOver, highlight, unhighlight, handleDrop, getMessage } from "./chat.js";
 import { initializeAds, setupSponsoredBannerListener, updateSponsoredBannerUI } from "./adsense.js";
 
+// Expose functions globally
+window.openServiceCenter = openServiceCenter;
+window.openContactModal = openContactModal;
+window.startLiveChat = startLiveChat;
+
 // Expose UI utilities globally
 window.createModal = createModal;
 window.showCustomModal = showCustomModal;

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BIM Admin Panel</title>
+    <title>BIM Admin Panel - Live Support</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="./admin.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -16,6 +16,194 @@
             }
         }
     </script>
+    <style>
+        /* Enhanced Live Chat Styles */
+        .agent-status-bar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .agent-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .agent-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: white;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+        
+        .agent-stats {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .stat-label {
+            font-size: 0.75rem;
+            opacity: 0.9;
+        }
+        
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255,255,255,0.2);
+            border-radius: 2rem;
+            font-size: 0.9rem;
+        }
+        
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #10b981;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* Session Priority Badges */
+        .priority-high {
+            color: #ef4444;
+            font-weight: 600;
+        }
+        
+        .priority-normal {
+            color: #6b7280;
+        }
+        
+        .priority-low {
+            color: #9ca3af;
+        }
+        
+        /* Improved Message Bubbles */
+        .message {
+            position: relative;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .message:hover .message-actions {
+            opacity: 1;
+        }
+        
+        .message-actions {
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        
+        /* Quick Actions Panel */
+        .quick-actions {
+            display: flex;
+            gap: 0.5rem;
+            padding: 1rem;
+            background: #f9fafb;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .quick-action-btn {
+            flex: 1;
+            padding: 0.75rem;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            font-size: 0.85rem;
+        }
+        
+        .quick-action-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--text-muted);
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+        
+        /* Loading Spinner */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(79, 70, 229, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 0.8s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Notification Badge */
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+    </style>
 </head>
 <body>
 
@@ -40,12 +228,25 @@
                 <i class="fas fa-cubes"></i> BIM Admin
             </div>
             <nav class="nav-menu">
-                <a href="#" class="nav-item" data-tab="dashboard"><i class="fas fa-chart-line"></i> Dashboard</a>
-                <a href="#" class="nav-item" data-tab="users"><i class="fas fa-users"></i> Users</a>
-                <a href="#" class="nav-item" data-tab="projects"><i class="fas fa-building"></i> Projects</a>
-                <a href="#" class="nav-item" data-tab="messages"><i class="fas fa-envelope"></i> Messages</a>
-                <a href="#" class="nav-item" data-tab="live-chat"><i class="fas fa-headset"></i> Support Team</a>
-                <a href="#" class="nav-item" data-tab="settings"><i class="fas fa-cogs"></i> System Settings</a>
+                <a href="#" class="nav-item" data-tab="dashboard">
+                    <i class="fas fa-chart-line"></i> Dashboard
+                </a>
+                <a href="#" class="nav-item" data-tab="live-chat">
+                    <i class="fas fa-headset"></i> Support Team
+                    <span id="new-chats-badge" class="notification-badge" style="display:none; position:relative; top:auto; right:auto; margin-left:auto;">0</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="users">
+                    <i class="fas fa-users"></i> Users
+                </a>
+                <a href="#" class="nav-item" data-tab="projects">
+                    <i class="fas fa-building"></i> Projects
+                </a>
+                <a href="#" class="nav-item" data-tab="messages">
+                    <i class="fas fa-envelope"></i> Messages
+                </a>
+                <a href="#" class="nav-item" data-tab="settings">
+                    <i class="fas fa-cogs"></i> Settings
+                </a>
             </nav>
             <div class="logout-section">
                 <button id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
@@ -67,22 +268,100 @@
                     </div>
                     <div class="stat-card">
                         <div class="stat-value" id="stat-msgs">-</div>
-                        <div class="stat-label">Total Messages</div>
+                        <div class="stat-label">Support Sessions</div>
                     </div>
                 </div>
-                <div class="card">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:10px;">
-                        <h3 style="margin:0;">User Growth</h3>
-                        <div style="display:flex; gap:10px; align-items:center;">
-                            <input type="date" id="chart-start" class="form-input" style="padding:0.4rem; width:auto; margin:0; font-size:0.85rem;">
-                            <span style="color:#666">-</span>
-                            <input type="date" id="chart-end" class="form-input" style="padding:0.4rem; width:auto; margin:0; font-size:0.85rem;">
-                            <button id="filter-chart-btn" class="btn-primary" style="padding:0.4rem 0.8rem; font-size:0.85rem; margin:0;">Filter</button>
-                            <button id="reset-chart-btn" class="btn-sm" style="padding:0.4rem 0.8rem; font-size:0.85rem;">Reset</button>
+            </section>
+
+            <!-- Live Chat Tab -->
+            <section id="tab-live-chat" class="tab-content">
+                <h1 class="page-title">Live Support Center</h1>
+                
+                <!-- Agent Status Bar -->
+                <div class="agent-status-bar">
+                    <div class="agent-info">
+                        <div class="agent-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div>
+                            <div style="font-weight:600; font-size:1rem;" id="agent-name-display">Agent</div>
+                            <div class="status-indicator">
+                                <span class="status-dot"></span>
+                                Online & Available
+                            </div>
                         </div>
                     </div>
-                    <div style="position: relative; height: 300px; width: 100%;">
-                        <canvas id="userGrowthChart"></canvas>
+                    <div class="agent-stats">
+                        <div class="stat-item">
+                            <div class="stat-value" id="active-chats-count">0</div>
+                            <div class="stat-label">Active Chats</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="waiting-chats-count">0</div>
+                            <div class="stat-label">Waiting</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="total-today-count">0</div>
+                            <div class="stat-label">Today</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Layout -->
+                <div class="chat-layout">
+                    <!-- Sessions Sidebar -->
+                    <div class="sidebar" style="width: 300px; border-right: 1px solid var(--border); background: #f9fafb;">
+                        <div class="sidebar-header">
+                            <i class="fas fa-inbox"></i> Support Inbox
+                        </div>
+                        <div id="session-list" class="session-list">
+                            <div class="empty-state">
+                                <i class="fas fa-comments"></i>
+                                <p>No active conversations</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chat Area -->
+                    <div class="chat-area">
+                        <div id="chat-header" class="chat-header">
+                            Select a conversation
+                        </div>
+
+                        <!-- Quick Actions -->
+                        <div class="quick-actions" style="display:none;" id="quick-actions-panel">
+                            <button class="quick-action-btn" onclick="insertQuickText('Hello! How can I help you today?')">
+                                <i class="fas fa-smile"></i> Greeting
+                            </button>
+                            <button class="quick-action-btn" onclick="insertQuickText('Could you please provide your Project ID?')">
+                                <i class="fas fa-hashtag"></i> Ask ID
+                            </button>
+                            <button class="quick-action-btn" onclick="insertQuickText('Let me look into this for you.')">
+                                <i class="fas fa-search"></i> Investigating
+                            </button>
+                            <button class="quick-action-btn" onclick="insertQuickText('Is there anything else I can help with?')">
+                                <i class="fas fa-check"></i> Anything Else?
+                            </button>
+                        </div>
+
+                        <!-- Messages Container -->
+                        <div id="messages-container" class="messages-container">
+                            <div class="empty-state">
+                                <i class="fas fa-arrow-left"></i>
+                                <p>Select a conversation from the left to start chatting</p>
+                            </div>
+                        </div>
+
+                        <!-- Input Area -->
+                        <div class="input-area">
+                            <button onclick="attachFile()" style="padding: 0.75rem; background: var(--bg-body); border: 1px solid var(--border); border-radius: 0.375rem; cursor: pointer;" title="Attach file">
+                                <i class="fas fa-paperclip"></i>
+                            </button>
+                            <input type="text" id="reply-input" placeholder="Type your message..." disabled onkeypress="if(event.key==='Enter') window.sendAdminChat()">
+                            <button id="send-btn" disabled onclick="window.sendAdminChat()" style="padding: 0 1.5rem; background: var(--primary); color: white; border: none; border-radius: 0.375rem; cursor: pointer; font-weight: 600;">
+                                <i class="fas fa-paper-plane"></i> Send
+                            </button>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -91,7 +370,12 @@
             <section id="tab-users" class="tab-content">
                 <h1 class="page-title">User Management</h1>
                 <div class="card">
-                    <div id="users-list" class="data-list">Loading users...</div>
+                    <div id="users-list" class="data-list">
+                        <div style="text-align:center; padding:2rem;">
+                            <div class="loading-spinner"></div>
+                            <p style="margin-top:1rem; color:var(--text-muted);">Loading users...</p>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -99,18 +383,12 @@
             <section id="tab-projects" class="tab-content">
                 <h1 class="page-title">Project Management</h1>
                 <div class="card">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; gap:10px; flex-wrap:wrap;">
-                        <div style="display:flex; gap:10px; align-items:center; flex:1;">
-                            <input type="text" id="project-search-input" placeholder="Enter Project ID for Recovery..." class="form-input" style="margin:0; max-width:300px;">
-                            <button id="project-search-btn" class="btn-primary" style="margin:0; padding:0.5rem 1rem;">Search</button>
-                            <button id="project-refresh-btn" class="btn-sm" style="margin:0; padding:0.5rem 1rem;"><i class="fas fa-sync"></i></button>
+                    <div id="projects-list" class="data-list">
+                        <div style="text-align:center; padding:2rem;">
+                            <div class="loading-spinner"></div>
+                            <p style="margin-top:1rem; color:var(--text-muted);">Loading projects...</p>
                         </div>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="show-deleted-projects" onchange="window.toggleShowDeletedProjects(this.checked)">
-                            <span class="slider"></span> <span style="margin-left:10px; font-size:0.9rem;">Show Deleted</span>
-                        </label>
                     </div>
-                    <div id="projects-list" class="data-list">Loading projects...</div>
                 </div>
             </section>
 
@@ -118,46 +396,19 @@
             <section id="tab-messages" class="tab-content">
                 <h1 class="page-title">Contact Submissions</h1>
                 <div class="card">
-                    <div style="display:flex; justify-content:flex-end; margin-bottom:1rem;">
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="filter-unreplied" onchange="window.toggleFilterUnreplied(this.checked)">
-                            <span class="slider"></span> <span style="margin-left:10px; font-size:0.9rem;">Show Unreplied Only</span>
-                        </label>
-                    </div>
-                    <div id="messages-list" class="data-list">Loading messages...</div>
-                </div>
-            </section>
-
-            <!-- Live Chat Tab -->
-            <section id="tab-live-chat" class="tab-content">
-                <h1 class="page-title">Support Team</h1>
-                <div class="chat-layout">
-                    <div class="sidebar" style="width: 300px; border-right: 1px solid var(--border);">
-                        <div class="sidebar-header"><i class="fas fa-inbox"></i> Support Inbox</div>
-                        <div id="session-list" class="session-list">
-                            <!-- Sessions will be loaded here -->
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                        <div style="display:flex; gap:1rem;">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="filter-unreplied">
+                                <span class="slider"></span>
+                            </label>
+                            <span style="font-size:0.9rem; color:var(--text-muted);">Show Unreplied Only</span>
                         </div>
                     </div>
-                    <div class="chat-area">
-                        <div id="chat-header" class="chat-header">Select a conversation</div>
-                        <div id="messages-container" class="messages-container"></div>
-                        <div class="input-area">
-                            <select id="auto-response-select" onchange="window.handleAutoResponse(this)" style="padding:0.75rem; border:1px solid var(--border); border-radius:0.25rem; margin-right:5px; max-width: 150px; cursor: pointer;">
-                                <option value="">Auto Reply...</option>
-                                <option value="Hello! How can I help you today?">Hello!</option>
-                                <option value="Could you please provide your Project ID?">Project ID?</option>
-                                <option value="We are looking into your issue.">Looking into it</option>
-                                <option value="Thank you for contacting support.">Thank you</option>
-                            </select>
-                            <select id="quick-response-select" onchange="window.handleQuickResponse(this)" style="padding:0.75rem; border:1px solid var(--border); border-radius:0.25rem; margin-right:5px; max-width: 150px; cursor: pointer;">
-                                <option value="">Quick Reply...</option>
-                                <option value="Hello! How can I help you today?">Hello!</option>
-                                <option value="Could you please provide your Project ID?">Project ID?</option>
-                                <option value="We are looking into your issue.">Looking into it</option>
-                                <option value="Thank you for contacting support.">Thank you</option>
-                            </select>
-                            <input type="text" id="reply-input" placeholder="Type a reply..." disabled onkeypress="if(event.key==='Enter') window.sendAdminChat()">
-                            <button id="send-btn" disabled onclick="window.sendAdminChat()"><i class="fas fa-paper-plane"></i></button>
+                    <div id="messages-list" class="data-list">
+                        <div style="text-align:center; padding:2rem;">
+                            <div class="loading-spinner"></div>
+                            <p style="margin-top:1rem; color:var(--text-muted);">Loading messages...</p>
                         </div>
                     </div>
                 </div>
@@ -167,29 +418,29 @@
             <section id="tab-settings" class="tab-content">
                 <h1 class="page-title">System Settings</h1>
                 
-                <!-- Sponsored Banner Config -->
+                <!-- Banner Config -->
                 <div class="card">
-                    <h3><i class="fas fa-ad"></i> Sponsored Banner Configuration</h3>
+                    <h3><i class="fas fa-ad"></i> Sponsored Banner</h3>
                     <p style="color:#666; font-size:0.9rem; margin-bottom:1rem;">Control the banner displayed at the top of user dashboards.</p>
                     <form id="banner-form" style="display:flex; flex-direction:column; gap:1rem;">
                         <label class="toggle-switch">
                             <input type="checkbox" id="banner-active">
-                            <span class="slider"></span> <span style="margin-left:10px; font-size:0.9rem;">Enable Banner</span>
+                            <span class="slider"></span>
+                            <span style="margin-left:10px;">Enable Banner</span>
                         </label>
-                        <input type="text" id="banner-title" placeholder="Banner Title (e.g., Special Offer)" class="form-input">
-                        <input type="text" id="banner-desc" placeholder="Short Description" class="form-input">
-                        <input type="url" id="banner-link" placeholder="Target URL (https://...)" class="form-input">
+                        <input type="text" id="banner-title" placeholder="Banner Title" class="form-input">
+                        <input type="text" id="banner-desc" placeholder="Description" class="form-input">
+                        <input type="url" id="banner-link" placeholder="Target URL" class="form-input">
                         <button type="submit" class="btn-primary">Save Banner Settings</button>
                     </form>
                 </div>
 
-                <!-- File & Viewer Settings -->
+                <!-- File Settings -->
                 <div class="card">
-                    <h3><i class="fas fa-file-upload"></i> File & Viewer Settings</h3>
-                    <p style="color:#666; font-size:0.9rem; margin-bottom:1rem;">Set global limits and view supported formats.</p>
+                    <h3><i class="fas fa-file-upload"></i> File Settings</h3>
                     <form id="file-config-form" style="display:flex; flex-direction:column; gap:1rem;">
-                        <label style="font-size:0.9rem; color:#666;">Max File Upload Size (MB)</label>
-                        <input type="number" id="max-file-size" placeholder="e.g., 100" class="form-input" style="max-width: 200px;">
+                        <label style="font-size:0.9rem; color:#666;">Max File Size (MB)</label>
+                        <input type="number" id="max-file-size" placeholder="100" class="form-input" style="max-width:200px;">
                         <button type="submit" class="btn-primary">Save File Settings</button>
                     </form>
                 </div>
@@ -197,11 +448,11 @@
                 <!-- UI Settings -->
                 <div class="card">
                     <h3><i class="fas fa-desktop"></i> UI Settings</h3>
-                    <p style="color:#666; font-size:0.9rem; margin-bottom:1rem;">Set the default page that loads after login.</p>
                     <form id="ui-config-form" style="display:flex; flex-direction:column; gap:1rem;">
                         <label style="font-size:0.9rem; color:#666;">Default Landing Page</label>
-                        <select id="default-page-select" class="form-input" style="max-width: 200px;">
+                        <select id="default-page-select" class="form-input" style="max-width:200px;">
                             <option value="dashboard">Dashboard</option>
+                            <option value="live-chat">Support Team</option>
                             <option value="users">Users</option>
                             <option value="projects">Projects</option>
                             <option value="messages">Messages</option>
@@ -214,5 +465,20 @@
     </div>
 
     <script type="module" src="./admin.js"></script>
+    <script>
+        // Helper function for quick text insertion
+        window.insertQuickText = function(text) {
+            const input = document.getElementById('reply-input');
+            if (input) {
+                input.value = text;
+                input.focus();
+            }
+        }
+
+        // Helper function for file attachment (placeholder)
+        window.attachFile = function() {
+            alert('File attachment feature coming soon!');
+        }
+    </script>
 </body>
 </html>

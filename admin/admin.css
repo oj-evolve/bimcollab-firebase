@@ -6,6 +6,9 @@
     --bg-card: #ffffff;
     --text-main: #111827;
     --border: #e5e7eb;
+    --primary: #4f46e5;      /* Main brand color */
+    --bg-body: #f3f4f6;      /* Background */
+    --text-main: #111827;    /* Text color */
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
